@@ -33,7 +33,7 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
 
             }
             
-            return View();
+            return RedirectToAction("LogIn","Users");
 
         }
         [HttpGet]
@@ -44,17 +44,16 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
         [HttpPost]
         public IActionResult LogIn(Users user)
         {
-            var us = _context.Users.Where(u => u.UserId == user.UserId && u.UserPassword==user.UserPassword).SingleOrDefault();
-            if (us == null)
+            var us = _context.Users.Where(u => u.UserEmailId == user.UserEmailId && u.UserPassword==user.UserPassword).SingleOrDefault();
+            if (us != null)
             {
                 if(us.RoleId == 1)
                 {
-                    return RedirectToAction("Index","Home");
+                    return RedirectToAction("Index","Admin");
                 }
-                else
+                else if(us.RoleId == 2)
                 {
-                    ViewBag.popmessage = "<script> alert('LogIn Successfull!')</script>";
-                    return View();
+                    return RedirectToAction("Index", "Users");
                 }
             }
             return View();
