@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MVC_eCommerce_Ashley_Furniture_Project.Models;
 
 namespace MVC_eCommerce_Ashley_Furniture_Project.Data
 {
@@ -12,5 +13,7 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Data
             : base(options)
         {
         }
+        public DbSet<Users> Users { get; set; }
+        public DbSet<Product> products { get; set; } 
     }
 }
