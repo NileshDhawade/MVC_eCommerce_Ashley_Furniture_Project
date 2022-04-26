@@ -14,6 +14,9 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Data
         {
         }
         public DbSet<Users> Users { get; set; }
-        public DbSet<Product> products { get; set; } 
+        public DbSet<Product> products { get; set; }
+        public DbSet<Roles> roles { get; set; }
+        public DbSet<Category> categories { get; set; }
+        public DbSet<Orders> orders { get; set; }
     }
 }
