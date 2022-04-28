@@ -1,0 +1,40 @@
+﻿@model MVC_eCommerce_Ashley_Furniture_Project.Models.Ordered
+
+
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<h1>Cart</h1>
+
+<h4></h4>
+@Html.Raw(ViewBag.OrderPlaced)
+
+@using (Html.BeginForm(@Model))
+                {
+                    <p>@Model.ProductName</p>
+                <div>
+                     <div class="form-group">
+                        <input type="hidden" name="id" value="@Model.ProductId"/>
+                    
+                         <h5 id="scrollspyHeading1">Product Name: @Model.ProductName</h5>
+
+                        <h5 id="scrollspyHeading2">Product Price: @Html.DisplayFor(model => model.ProductPrice)</h5>
+                         
+                        <h5 id="scrollspyHeading2">Product Quntity: @Html.DisplayFor(model => model.ProductQuntity)</h5>
+                        
+                        <h5 id="scrollspyHeading2">Total Amount: @Html.DisplayFor(model => model.ProductTotalBill)</h5>
+                        
+                       
+                       
+                       <input type="submit" value="Placed Order" class ="btn btn-warning" />
+                       </div>
+                    </div>              
+                    }
+
+                  
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

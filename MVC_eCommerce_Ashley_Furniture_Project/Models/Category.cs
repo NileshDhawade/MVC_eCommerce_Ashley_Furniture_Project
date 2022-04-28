@@ -8,7 +8,6 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Models
     {
         [Key]
         public int CategoryId { get; set; }
-        [Required]
         public string CategoryName { get; set; }
     }
 }

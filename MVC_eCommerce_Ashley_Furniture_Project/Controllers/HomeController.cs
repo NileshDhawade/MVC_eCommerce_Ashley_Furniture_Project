@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MVC_eCommerce_Ashley_Furniture_Project.Data;
 using MVC_eCommerce_Ashley_Furniture_Project.Models;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,10 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
             return View();
         }
 
+        public IActionResult Customer()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
