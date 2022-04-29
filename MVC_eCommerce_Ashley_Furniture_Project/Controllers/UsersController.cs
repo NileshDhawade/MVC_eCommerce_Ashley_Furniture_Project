@@ -28,10 +28,11 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
             var us = context.Users.Where(u => u.Email == user.Email && u.Password == user.Password).SingleOrDefault();
             if (us != null)
             {
+                HttpContext.Session.SetInt32("UserId", us.UserId);
                 if (us.RoleId == 1)
                 {
                     //ViewBag.popmessage = "<script> alert('LogIn Successfull!') </script>"; 
-                    HttpContext.Session.SetInt32("UserId", us.UserId);
+                   
                     return RedirectToAction("Index", "Customer");
                 }
                 else

@@ -6,6 +6,8 @@ using MVC_eCommerce_Ashley_Furniture_Project.Data;
 using MVC_eCommerce_Ashley_Furniture_Project.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
 {
@@ -80,10 +82,19 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
             }
 
         }
+        //get
+        public IActionResult DisplayOrderedCart()
+        {
+
+            int id =(int)HttpContext.Session.GetInt32("UserId");
+            var orderlist=context.Ordered.Where(x => x.OrderId == id).ToList();
+            return View(orderlist);
+        }
         [HttpPost]
         public IActionResult Logout()
         {
-            return RedirectToAction("Index", "Home");
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index","Home");
         }
 
     }
