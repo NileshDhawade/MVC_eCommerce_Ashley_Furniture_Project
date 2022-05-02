@@ -19,16 +19,22 @@
             @Html.DisplayFor(model => model.ProductName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CategoryId)
+            @Html.DisplayNameFor(model => model.CategoryName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CategoryId)
+            @Html.DisplayFor(model => model.CategoryName)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ProductPrice)
         </dt>
-        <dd class = "col-sm-10">
+
+        <dd class = "col-sm-2">
             @Html.DisplayFor(model => model.ProductPrice)
+        </dd>
+        
+
+        <dd class = "col-sm-10">
+            <img src="~/images/@Model.ProductImageUrl" height="150" />
         </dd>
     </dl>
     

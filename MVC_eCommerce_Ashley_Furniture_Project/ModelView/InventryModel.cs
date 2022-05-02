@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
-namespace MVC_eCommerce_Ashley_Furniture_Project.Models
+namespace MVC_eCommerce_Ashley_Furniture_Project.ModelView
 {
-    [Table("Inventry")]
-    public class Inventry
+    public class InventryModel
     {
-
         [Key]
         public int ProductId { get; set; }
         [Required(ErrorMessage = "Filed Required")]
@@ -19,13 +16,8 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Models
         [NotMapped]
         public string? CategoryName { get; set; }
         public decimal ProductPrice { get; set; }
-
-        public string ProductImageUrl { get; set; }
-
         [NotMapped]
-
-        public IFormFile ImageFile { get; set; }
-
+        public IFormFile ProductImageUrl { get; set; }
 
     }
 }

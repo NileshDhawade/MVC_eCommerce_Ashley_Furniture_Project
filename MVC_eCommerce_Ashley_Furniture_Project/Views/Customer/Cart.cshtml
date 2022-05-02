@@ -11,6 +11,8 @@
 <h4></h4>
 @Html.Raw(ViewBag.OrderPlaced)
 
+<div> <img src="~/images/@Model.ProductImageUrl" width = "150" height="150" alt="..."></div>
+
 @using (Html.BeginForm(@Model))
                 {
                     <p>@Model.ProductName</p>

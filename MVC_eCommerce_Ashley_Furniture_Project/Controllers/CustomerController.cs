@@ -23,6 +23,8 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
         public IActionResult Index()
         {
             var l = context.Inventry.ToList();
+            var name = HttpContext.Session.GetString("Name");
+            ViewBag.Message = "Hello " + name;
             ViewBag.Products = l;
             return View(l);
         }
@@ -46,7 +48,10 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
                 od.ProductQuntity = qty;
                 od.ProductPrice = prod.ProductPrice;
                 od.ProductTotalBill = od.ProductQuntity * od.ProductPrice;
+                od.ProductImageUrl = prod.ProductImageUrl;
                 // ViewBag.Order=od;
+
+
                 HttpContext.Session.SetString("data", JsonConvert.SerializeObject(od));
 
                 return RedirectToAction("Cart");
@@ -72,29 +77,130 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
 
             if (r == 1)
             {
-                ViewBag.OrderPlaced = "<script> alert('Order Placed!') </script>";
+                HttpContext.Session.SetString("msg", "<script> alert('Order Placed!') </script>");
                 return RedirectToAction("Index");
             }
             else
             {
-                ViewBag.OrderPlaced = "<script> alert('Failed to placed!') </script>";
+                HttpContext.Session.SetString("msg", "<script> alert('Failed to placed!') </script>");
                 return View();
             }
 
         }
-        //get
-        public IActionResult DisplayOrderedCart()
+        [HttpGet]
+        public IActionResult ViewOrder()
         {
+            //int id = (int)HttpContext.Session.GetInt32("UserId");
+            //int id = 2;
+            int id = (int)HttpContext.Session.GetInt32("UserId");
+            var orderlist = context.Ordered.Where(o => o.UserId == id).ToList();
 
-            int id =(int)HttpContext.Session.GetInt32("UserId");
-            var orderlist=context.Ordered.Where(x => x.OrderId == id).ToList();
             return View(orderlist);
+
+        }
+
+        [HttpGet]
+        public IActionResult AddToCart(int ProductId)
+        {
+            var id = (int)HttpContext.Session.GetInt32("UserId");
+            var product = context.Inventry.FirstOrDefault(o => o.ProductId == ProductId);
+            Cart cart = new Cart();
+            if (product != null)
+            {
+                cart.ProductId = product.ProductId;
+                cart.UserId = id;
+                cart.ProductPrice = product.ProductPrice;
+                cart.ProductName = product.ProductName;
+                cart.ProductQuntity = 1;
+                cart.ProductImageUrl = product.ProductImageUrl;
+            }
+
+            context.Cart.Add(cart);
+            int result = context.SaveChanges();
+            if (result == 1)
+            {
+                
+                HttpContext.Session.SetString("msg", "<script> alert('Product Added to Cart') </script>");
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                HttpContext.Session.SetString("msg", "<script> alert('Failed to Add to the cart') </script>");
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [HttpGet]
+        public IActionResult ViewCart()
+        {
+            var id = (int)HttpContext.Session.GetInt32("UserId");
+            var cartlist = context.Cart.Where(c => c.UserId == id).ToList();
+            if (cartlist.Count > 0)
+            {
+                return View(cartlist);
+            }
+            else
+            {
+                ViewBag.Add = "<h4>Cart is Empty</h4>";
+                return View();
+            }
+        }
+        [HttpGet]
+        public IActionResult Proceed(int CartId)
+        {
+            var Prod = context.Cart.Where(c => c.CartId == CartId).SingleOrDefault();
+            var p = Prod;
+
+            return View(Prod);
+        }
+
+        [HttpPost]
+        public IActionResult Proceed(int CartId, int qty)
+        {
+            var cart = context.Cart.Where(c => c.CartId == CartId).SingleOrDefault();
+            if (cart != null)
+            {
+                Ordered od = new Ordered();
+                od.ProductId = cart.ProductId;
+                od.UserId = cart.UserId;
+                od.ProductPrice = cart.ProductPrice;
+                od.ProductName = cart.ProductName;
+                od.ProductQuntity = qty;
+                od.ProductTotalBill = cart.ProductPrice * qty;
+                od.ProductImageUrl = cart.ProductImageUrl;
+
+                HttpContext.Session.SetInt32("ProductId", cart.ProductId);
+                context.Ordered.Add(od);
+                context.SaveChanges();
+
+                context.Cart.Remove(cart);
+                context.SaveChanges();
+                HttpContext.Session.SetString("data2", JsonConvert.SerializeObject(od));
+                return RedirectToAction("Placed");
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Placed()
+        {
+            var data = HttpContext.Session.GetString("data2");
+            Ordered ordered = JsonConvert.DeserializeObject<Ordered>(data);
+
+
+            return View(ordered);
         }
         [HttpPost]
+
+
+
+        [HttpGet]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
 
     }

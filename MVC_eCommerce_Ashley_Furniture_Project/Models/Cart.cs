@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MVC_eCommerce_Ashley_Furniture_Project.Models
 {
-    [Table("Ordered")]
-    public class Ordered
+    [Table("Cart")]
+    public class Cart
     {
         [Key]
-        public int OrderId { get; set; }
+        public int CartId { get; set; }
 
         public int ProductId { get; set; }
 
@@ -20,6 +20,7 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Models
         public int ProductQuntity { get; set; }
 
         public decimal ProductTotalBill { get; set; }
+
         public string ProductImageUrl { get; set; }
 
     }

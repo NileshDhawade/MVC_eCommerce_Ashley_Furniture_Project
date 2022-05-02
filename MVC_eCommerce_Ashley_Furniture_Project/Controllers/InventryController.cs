@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MVC_eCommerce_Ashley_Furniture_Project.Data;
 using MVC_eCommerce_Ashley_Furniture_Project.Models;
+using MVC_eCommerce_Ashley_Furniture_Project.ModelView;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
@@ -11,10 +15,12 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
     public class InventryController : Controller
     {
         private readonly ApplicationDbContext context;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
         public InventryController(ApplicationDbContext context)
         {
             this.context = context;
+            this.webHostEnvironment = webHostEnvironment;
         }
         public IActionResult AllProductList()
         {
@@ -55,13 +61,27 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Inventry inventry)
+        public IActionResult Create(IFormFile file, [Bind("ProductId,ProductName,CategoryId,ProductPrice,ProductImageUrl")] Inventry inventry)
         {
+            if (file != null)
+            {
+                string filename = file.FileName;
+                string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images"));
+                using (var filestream = new FileStream(Path.Combine(path, filename), FileMode.Create))
+                {
+                    file.CopyTo(filestream);
+
+                }
+
+                inventry.ProductImageUrl = filename;
+            }
+
+
             context.Inventry.Add(inventry);
             int id = context.SaveChanges();
             if (id == 1)
             {
-                ViewBag.Message = "< script > alert('Successfull Added!') </ script > ";
+                ViewBag.Message = "< script > alert('Successfully Added!') </ script > ";
                 return RedirectToAction("AllProductList", "Inventry");
             }
             else
@@ -81,14 +101,31 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
             return View(prod);
         }
         [HttpPost]
-        public IActionResult Edit(Inventry inventry)
+        public IActionResult Edit(IFormFile file, [Bind("ProductId,ProductName,CategoryId,ProductPrice,ProductImageUrl")] Inventry inventry)
         {
+            if (file != null)
+            {
+                string filename = file.FileName;
+                string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images"));
+                using (var filestream = new FileStream(Path.Combine(path, filename), FileMode.Create))
+                {
+                    file.CopyTo(filestream);
+
+                }
+
+                inventry.ProductImageUrl = filename;
+            }
+
+
+
+
             var prod = context.Inventry.Where(p => p.ProductId == inventry.ProductId).SingleOrDefault();
             if (prod != null)
             {
                 prod.ProductName = inventry.ProductName;
                 prod.ProductPrice = inventry.ProductPrice;
                 prod.CategoryId = inventry.CategoryId;
+                prod.ProductImageUrl = inventry.ProductImageUrl;
 
                 context.Update(prod);
                 int res = context.SaveChanges();
@@ -115,6 +152,9 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
         public IActionResult Delete(int ProductId)
         {
             var result = context.Inventry.Where(p => p.ProductId == ProductId).SingleOrDefault();
+            var cat = context.Category.Where(c => c.CategoryId == result.CategoryId).SingleOrDefault();
+
+            result.CategoryName = cat.CategoryName;
 
             return View(result);
         }
@@ -145,6 +185,60 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
                 ViewBag.DeleteMessage = "< script > alert('Not Found!') </ script >";
                 return RedirectToAction("AllProductList", "Inventry");
             }
+        }
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult AllProductList2()
+        {
+            var prod = context.Inventry.ToList();
+            var cat = context.Category.ToList();
+            //  List<Product> products = new List<Product>();
+            //  Product product = new Product();
+            foreach (Inventry item in prod)
+            {
+                foreach (Category c in cat)
+                {
+                    if (c.CategoryId == item.CategoryId)
+                    {
+                        item.CategoryName = c.CategoryName;
+                    }
+                }
+            }
+            //  {
+
+            //       product.ProductId = item.ProductId;
+            //      product.ProductName = item.ProductName;
+            //      product.CategoryName = cat.CategoryName;
+            //      product.ProductPrice = item.ProductPrice;
+            //      products.Add(product);
+            //  }
+
+            var products = context.Inventry.ToList();
+            ViewBag.Products = products;
+            return View();
+        }
+
+
+
+        private string UploadFile(InventryModel im)
+        {
+            string FileName = null;
+            if (im.ProductImageUrl != null)
+            {
+                string uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "images");
+                FileName = Guid.NewGuid().ToString() + "-" + im.ProductImageUrl.FileName;
+                string FilePath = Path.Combine(uploadDir, FileName);
+                using (var fileStream = new FileStream(FilePath, FileMode.Create))
+                {
+                    im.ProductImageUrl.CopyTo(fileStream);
+                }
+            }
+            return FileName;
+
         }
 
     }

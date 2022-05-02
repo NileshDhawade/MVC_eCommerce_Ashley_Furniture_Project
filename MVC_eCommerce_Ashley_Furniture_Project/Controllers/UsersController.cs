@@ -29,6 +29,7 @@ namespace MVC_eCommerce_Ashley_Furniture_Project.Controllers
             if (us != null)
             {
                 HttpContext.Session.SetInt32("UserId", us.UserId);
+                HttpContext.Session.SetInt32("Id", us.UserId);
                 if (us.RoleId == 1)
                 {
                     //ViewBag.popmessage = "<script> alert('LogIn Successfull!') </script>"; 

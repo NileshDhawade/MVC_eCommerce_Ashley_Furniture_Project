@@ -43,6 +43,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ProductPrice)
             </td>
+             <td>
+                <img src="~/images/@item.ProductImageUrl" width="40" height="40" asp-append-version ="true">
+            </td>
             <td>
                 @Html.ActionLink("Edit","Edit",new{ProductId=item.ProductId})
               @*  <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a>*@ |
@@ -53,4 +56,4 @@
 }
     </tbody>
 </table>
-© 2022 GitHub, Inc.
+
